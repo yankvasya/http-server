@@ -1,5 +1,4 @@
 const http = require('http');
-const request = require('request');
 
 const port = 8080;
 const interval = 1000;
@@ -11,21 +10,19 @@ http.createServer((req, res) => {
   if (req.method === 'GET') {
     const currentTimer = setInterval(() => {
       const data = new Date();
+
       timer -= interval;
-      console.log(`${data}`);
-      res.write(`<div>${data}`);
 
       if (timer <= 0) {
-        clearInterval(currentTimer);
-        console.log(`Server stopped at - ${data}`);
-        res.write(`<div>Server stopped at - ${data}`);
-        res.end();
+        if (timer === 0) {
+          res.end(`<div>Server stopped at - ${data}`);
+          console.log(`Server stopped at - ${data}`);
+        }
+        return clearInterval(currentTimer);
+      } else {
+        console.log(`${data}`);
+        res.write(`<div>${data}`);
       }
     }, interval);
-  } else {
-    res.write('Hello world');
-    res.end();
   }
 }).listen(port, () => console.log(`HTTP server running on port ${port}`));
-
-request('http://localhost:8080/', () => {});
